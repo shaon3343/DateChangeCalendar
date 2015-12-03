@@ -1,0 +1,139 @@
+<html>
+<head>	
+	 <!-- link rel="stylesheet" href="dateTimeLib/bootstrap/css/bootstrap.min.css")" type="text/css" -->
+        <link rel="stylesheet" href="dateTimeLib/bootstrap/css/bootstrap.css" type="text/css">
+        <link rel="stylesheet" href="dateTimeLib/bootstrap/css/bootstrap-theme.min.css" type="text/css">
+        <script src="dateTimeLib/js/moment.min.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="dateTimeLib/bootstrap/css/bootstrap-datetimepicker.min.css" type="text/css">
+	   
+	   <script src="dateTimeLib/js/jquery-1.11.3.min.js" type="text/javascript"></script>
+	    
+	    <script src="dateTimeLib/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+	    <script src="dateTimeLib/bootstrap/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+
+	    <script src="dateTimeLib/js/classie.js" type="text/javascript"></script>
+
+        <script src="dateTimeLib/js/validator.min.js")"></script>
+</head>
+<div class="container">
+      
+<form id="monthWise" data-toggle="validator">
+<div class="row">
+<div class="col-md-6">
+<label> From Date</label><br>
+<input type="text" id="frmDate" /><br>
+</div>
+</div>
+<div class="row">
+	<div class="col-md-6">
+	<label> To Date</label><br>
+	<input type="text" id="toDate" /><br>
+	</div>
+</div>
+<label>From Amount</label><br>
+<input type="number"   id="fromAmount" name="fromAmount"  data-fromamount="fromamount" autocomplete="off" /><br>
+<label> To Amount</label><br>
+<input type="number"  id="toAmount" name="toAmount" data-toamount="toamount" autocomplete="off" />
+</form>
+</div>
+<script>
+  $(document).ready(function() {
+               $('#frmDate').datetimepicker({
+					maxDate:  new Date(),
+                    format: "DD-MM-YYYY",
+
+                  }).on(
+					'dp.change',
+					function(e)
+					{
+				 //   alert(e.date);
+					    if(e.date!=false){
+					 //   $('#toDate').val("");
+					        $('#toDate').datetimepicker({
+					            minDate:e.date,
+								maxDate:new Date(),
+                                format: "DD-MM-YYYY"
+                            });
+                        }
+
+						return false;
+					}
+                );
+
+
+               /*  $('#frmDate').datetimepicker({
+
+                    format: "DD-MM-YYYY"
+                });
+                  $('#toDate').datetimepicker({
+
+                    format: "DD-MM-YYYY"
+                });*/
+            });
+
+
+/************ start New Date Amount Validator */
+		$(function () {
+			$("#frmDate").on("dp.change", function (e) {
+				$('#toDate').data("DateTimePicker").minDate(e.date);
+			});
+			$("#toDate").on("dp.change", function (e) {
+				$('#frmDate').data("DateTimePicker").maxDate(e.date);
+			});
+
+            $("#toAmount").change(function (e) {
+                $("#monthWise").data('bs.validator').validate();
+            });
+            $("#fromAmount").change(function (e) {
+                $("#monthWise").data('bs.validator').validate();
+            });
+            $("#toAmount").keyup(function (e) {
+                $("#monthWise").data('bs.validator').validate();
+            });
+            $("#fromAmount").keyup(function (e) {
+                $("#monthWise").data('bs.validator').validate();
+            });
+
+
+    	});
+
+
+        $('#monthWise').validator({
+      custom: {
+        fromamount: function ($el) {
+          var amtFrom = parseFloat($el.val());
+          var amtTo = parseFloat($("#toAmount").val());
+
+          if(isNaN(amtFrom))
+            return false;
+          else if(isNaN(amtTo))
+            return true;
+          else {
+            var isValid = Boolean(amtFrom <= amtTo);
+            return isValid;
+          }
+        },
+        toamount: function ($el) {
+          var amtFrom = parseFloat($("#fromAmount").val());
+          var amtTo = parseFloat($el.val());
+
+          if(isNaN(amtTo))
+            return false;
+          else if(isNaN(amtFrom))
+            return true;
+          else {
+            var isValid = Boolean(amtFrom <= amtTo);
+            return Boolean(isValid);
+          }
+        }
+      },
+      errors: {
+        fromamount: 'Value should be less than or equal to To Amount',
+        toamount: 'Value should be greater than or equal to From Amount'
+      }
+    })
+
+/********* END new Date Amount Validator */
+
+</script>
+</html>
